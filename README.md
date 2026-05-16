@@ -2,34 +2,7 @@
 
 ## 🚀 Quick Deploy to Vercel
 
-### Step 1 — Supabase Setup
-1. Go to [supabase.com](https://supabase.com) → **New Project**
-2. After creation, go to **Settings → API** and copy:
-   - **Project URL** → `SUPABASE_URL`
-   - **anon public key** → `SUPABASE_ANON_KEY`
-   - **service_role key** → `SUPABASE_SERVICE_KEY`
-   - **JWT Secret** (Settings → API → JWT Settings) → `SUPABASE_JWT_SECRET`
-3. Go to **Authentication → Providers** → enable **Email** and optionally **Google**
-4. In **Authentication → URL Configuration** set:
-   - Site URL: `https://your-app.vercel.app`
-   - Redirect URLs: `https://your-app.vercel.app/login.html`
-
-### Step 2 — Supabase: Inject Keys into login.html
-In `login.html`, replace these two lines with your actual values:
-```js
-const SUPA_URL  = 'https://YOUR_PROJECT.supabase.co';
-const SUPA_ANON = 'YOUR_ANON_KEY_HERE';
-```
-
-### Step 3 — In index.html, set your Supabase URL and anon key
-Find this section in `index.html`:
-```js
-const SUPABASE_URL  = '__SUPABASE_URL__';
-const SUPABASE_ANON = '__SUPABASE_ANON__';
-```
-Replace with your actual values.
-
-### Step 4 — Deploy to Vercel
+### Step 1 — Deploy to Vercel
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -37,24 +10,20 @@ npm i -g vercel
 # Login
 vercel login
 
-# Add environment variables (one-time setup)
-vercel env add SUPABASE_URL
-vercel env add SUPABASE_ANON_KEY
-vercel env add SUPABASE_SERVICE_KEY
-vercel env add SUPABASE_JWT_SECRET
-vercel env add ADMIN_EMAIL
-vercel env add MONGO_URI          # optional
-vercel env add ANTHROPIC_API_KEY  # optional (for Claude AI decisions)
-vercel env add KITE_API_KEY       # optional (for Zerodha live trading)
-vercel env add KITE_ACCESS_TOKEN  # optional
+# Add optional environment variables (if needed)
+vercel env add MONGO_URI          # optional - for MongoDB persistence
+vercel env add ANTHROPIC_API_KEY  # optional - for Claude AI decisions
+vercel env add KITE_API_KEY       # optional - for Zerodha live trading
+vercel env add KITE_ACCESS_TOKEN  # optional - for Zerodha live trading
 
 # Deploy
 vercel --prod
 ```
 
-### Step 5 — Set Admin
-- Sign up at `/login.html` using the email you set as `ADMIN_EMAIL`
-- You automatically get the **ADMIN** role and see the admin panel
+### Step 2 — Access Your Dashboard
+- Open your Vercel deployment URL
+- No authentication required - direct access to the dashboard
+- All features available immediately
 
 ---
 
@@ -98,12 +67,7 @@ vercel --prod
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `SUPABASE_URL` | ✅ | Your Supabase project URL |
-| `SUPABASE_ANON_KEY` | ✅ | Supabase anon/public key |
-| `SUPABASE_SERVICE_KEY` | ✅ | Supabase service role key (admin ops) |
-| `SUPABASE_JWT_SECRET` | ✅ | JWT secret for token verification |
-| `ADMIN_EMAIL` | ✅ | Email of the admin user |
-| `MONGO_URI` | ⚠️ | MongoDB Atlas URI (falls back to memory) |
+| `MONGO_URI` | ⚠️ | MongoDB Atlas URI (falls back to CSV files) |
 | `ANTHROPIC_API_KEY` | ⚙️ | Claude AI for trade decisions |
 | `KITE_API_KEY` | ⚙️ | Zerodha Kite API key (live trading) |
 | `KITE_ACCESS_TOKEN` | ⚙️ | Zerodha daily access token |
@@ -113,12 +77,11 @@ vercel --prod
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy and fill env vars
+# Copy and fill env vars (optional)
 cp .env.example .env
-# Edit .env with your values
+# Edit .env with your values (all optional)
 
 # Run locally
 python app.py
-# → http://localhost:5000/login.html
 # → http://localhost:5000
 ```

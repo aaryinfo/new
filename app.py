@@ -1,6 +1,6 @@
 """
 Indian Intraday Stock Scanner - Enhanced Backend Server
-Requirements: pip install yfinance pymongo flask flask-cors pandas numpy scikit-learn openai supabase PyJWT
+Requirements: pip install yfinance pymongo flask flask-cors pandas numpy scikit-learn
 Run: python app.py
 """
 
@@ -17,77 +17,6 @@ import hashlib
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from sklearn.linear_model import LinearRegression
-
-# ── Supabase Auth ────────────────────────────────────────────────────
-SUPABASE_URL         = os.environ.get("SUPABASE_URL", "")
-SUPABASE_ANON_KEY    = os.environ.get("SUPABASE_ANON_KEY", "")
-SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
-ADMIN_EMAIL          = os.environ.get("ADMIN_EMAIL", "admin@yourdomain.com")
-JWT_SECRET           = os.environ.get("SUPABASE_JWT_SECRET", "")  # from Supabase dashboard → Settings → API
-
-_supabase_admin = None
-try:
-    from supabase import create_client
-    if SUPABASE_URL and SUPABASE_SERVICE_KEY:
-        _supabase_admin = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-        print("[OK] Supabase admin client ready")
-    else:
-        print("[WARN] SUPABASE_URL or SUPABASE_SERVICE_KEY not set")
-except ImportError:
-    print("[WARN] supabase package not installed — run: pip install supabase")
-
-def _verify_token(token: str) -> dict | None:
-    """Verify Supabase JWT and return payload or None."""
-    if not token: return None
-    try:
-        import jwt as pyjwt
-        payload = pyjwt.decode(
-            token, JWT_SECRET,
-            algorithms=["HS256"],
-            options={"verify_aud": False}
-        )
-        return payload
-    except Exception as ex:
-        print(f"[AUTH] Token verify failed: {ex}")
-        return None
-
-def _get_user_role(payload: dict) -> str:
-    """Return 'admin' or 'user' based on email in token."""
-    email = (payload.get("email") or
-             (payload.get("user_metadata") or {}).get("email") or "")
-    return "admin" if email.lower() == ADMIN_EMAIL.lower() else "user"
-
-def require_auth(f):
-    """Decorator: protects routes — requires valid Supabase JWT."""
-    from functools import wraps
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.headers.get("Authorization", "")
-        token = auth.replace("Bearer ", "").strip()
-        payload = _verify_token(token)
-        if not payload:
-            return jsonify({"error": "Unauthorized", "code": 401}), 401
-        request.user_payload = payload
-        request.user_role = _get_user_role(payload)
-        return f(*args, **kwargs)
-    return decorated
-
-def require_admin(f):
-    """Decorator: admin-only routes."""
-    from functools import wraps
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.headers.get("Authorization", "")
-        token = auth.replace("Bearer ", "").strip()
-        payload = _verify_token(token)
-        if not payload:
-            return jsonify({"error": "Unauthorized", "code": 401}), 401
-        if _get_user_role(payload) != "admin":
-            return jsonify({"error": "Forbidden — admin only", "code": 403}), 403
-        request.user_payload = payload
-        request.user_role = "admin"
-        return f(*args, **kwargs)
-    return decorated
 
 # -- OpenAI for news ---------------------------------------------------------
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
@@ -2659,81 +2588,14 @@ def get_backtest_results():
 def serve_login():
     return send_from_directory(os.path.dirname(os.path.abspath(__file__)), "login.html")
 
-# ── Auth API routes ───────────────────────────────────────────────────
-@app.route("/api/auth/me")
-@require_auth
-def auth_me():
-    """Return current user info + role."""
-    email = (request.user_payload.get("email") or
-             (request.user_payload.get("user_metadata") or {}).get("email") or "")
-    return jsonify({
-        "email": email,
-        "role": request.user_role,
-        "user_id": request.user_payload.get("sub"),
-    })
-
-@app.route("/api/auth/verify", methods=["POST"])
-def auth_verify():
-    """Verify a token and return role — called by frontend on load."""
-    body = request.get_json(silent=True) or {}
-    token = body.get("token", "")
-    payload = _verify_token(token)
-    if not payload:
-        return jsonify({"valid": False}), 401
-    email = (payload.get("email") or
-             (payload.get("user_metadata") or {}).get("email") or "")
-    return jsonify({
-        "valid": True,
-        "email": email,
-        "role": _get_user_role(payload),
-        "user_id": payload.get("sub"),
-    })
-
-# ── Admin-only: user management ───────────────────────────────────────
-@app.route("/api/admin/users")
-@require_admin
-def admin_list_users():
-    """List all registered users from Supabase."""
-    if not _supabase_admin:
-        return jsonify({"error": "Supabase not configured"}), 503
-    try:
-        resp = _supabase_admin.auth.admin.list_users()
-        users = []
-        for u in (resp or []):
-            users.append({
-                "id":           u.id,
-                "email":        u.email,
-                "created_at":   str(u.created_at),
-                "last_sign_in": str(u.last_sign_in_at),
-                "confirmed":    u.email_confirmed_at is not None,
-                "role":         "admin" if u.email == ADMIN_EMAIL else "user",
-            })
-        return jsonify({"users": users, "total": len(users)})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/api/admin/users/<user_id>", methods=["DELETE"])
-@require_admin
-def admin_delete_user(user_id):
-    """Delete a user from Supabase (admin only)."""
-    if not _supabase_admin:
-        return jsonify({"error": "Supabase not configured"}), 503
-    try:
-        _supabase_admin.auth.admin.delete_user(user_id)
-        return jsonify({"status": "deleted", "user_id": user_id})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+# ── Admin stats endpoint (no auth required) ───────────────────────────
 @app.route("/api/admin/stats")
-@require_admin
 def admin_stats():
-    """Return platform stats — admin only."""
+    """Return platform stats."""
     today = datetime.now().strftime("%Y-%m-%d")
     stats = {
         "date": today,
         "total_fo_stocks": len(FO_STOCKS),
-        "admin_email": ADMIN_EMAIL,
-        "supabase_connected": _supabase_admin is not None,
         "mongo_connected": MONGO_OK,
         "agent_open_trades": 0,
         "scanner_running": _agent_running if '_agent_running' in globals() else False,
@@ -3166,7 +3028,7 @@ def agent_events():
             except: pass
     return Response(gen(),mimetype="text/event-stream",headers={"Cache-Control":"no-cache","X-Accel-Buffering":"no"})
 
-print("[OK] AI Agent v3 + Auth routes ready")
+print("[OK] AI Agent v3 ready (no auth)")
 
 # ══════════════════════════════════════════════════════════════════
 #  TRADING JOURNAL & DAILY REPORT ROUTES
@@ -3185,9 +3047,7 @@ if __name__ == "__main__":
     scanner_thread = threading.Thread(target=background_scanner, daemon=True)
     scanner_thread.start()
     print("=" * 62)
-    print("  NSE F&O Scanner + AI Agent v3 + Supabase Auth")
-    print("  Login:     http://localhost:5000/login")
-    print("  Dashboard: http://localhost:5000  (auth required)")
-    print("  Admin:     set ADMIN_EMAIL env var")
+    print("  NSE F&O Scanner + AI Agent v3")
+    print("  Dashboard: http://localhost:5000")
     print("=" * 62)
     app.run(debug=False, port=5000, host="0.0.0.0")
