@@ -18,11 +18,5 @@
       "src": "/(.*)",
       "dest": "/app.py"
     }
-  ],
-  "env": {
-    "ANTHROPIC_API_KEY":    "@anthropic_api_key",
-    "KITE_API_KEY":         "@kite_api_key",
-    "KITE_ACCESS_TOKEN":    "@kite_access_token",
-    "MONGO_URI":            "@mongo_uri"
-  }
+  ]
 }
