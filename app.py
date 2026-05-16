@@ -3039,8 +3039,9 @@ try:
 except Exception as e:
     print(f"[WARN] Journal routes not loaded: {e}")
 
-# Start backtest thread
-threading.Thread(target=refresh_global_backtest, daemon=True).start()
+# Start backtest thread only if not in serverless environment
+if not os.environ.get('SERVERLESS'):
+    threading.Thread(target=refresh_global_backtest, daemon=True).start()
 
 if __name__ == "__main__":
     _watchlist_state_cache_v2.clear()
