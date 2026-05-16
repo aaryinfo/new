@@ -1,0 +1,106 @@
+{
+  "date": "2026-05-14",
+  "generated_at": "2026-05-14T11:42:16.890409",
+  "market_summary": {
+    "nifty_50": {
+      "value": 23847,
+      "change": 285,
+      "change_pct": 1.21
+    },
+    "bank_nifty": {
+      "value": 51234,
+      "change": 412,
+      "change_pct": 0.81
+    },
+    "market_sentiment": "Bullish",
+    "total_stocks_tracked": 2,
+    "advancing": 2,
+    "declining": 0,
+    "unchanged": 0
+  },
+  "top_performers": [
+    {
+      "symbol": "TCS",
+      "name": "Tata Consultancy Services",
+      "price": 3845,
+      "change_pct": 2.1,
+      "volume": 3000000,
+      "sector": "IT Services"
+    },
+    {
+      "symbol": "RELIANCE",
+      "name": "Reliance Industries",
+      "price": 2934,
+      "change_pct": 1.5,
+      "volume": 5000000,
+      "sector": "Oil & Gas"
+    }
+  ],
+  "top_losers": [
+    {
+      "symbol": "RELIANCE",
+      "name": "Reliance Industries",
+      "price": 2934,
+      "change_pct": 1.5,
+      "volume": 5000000,
+      "sector": "Oil & Gas"
+    },
+    {
+      "symbol": "TCS",
+      "name": "Tata Consultancy Services",
+      "price": 3845,
+      "change_pct": 2.1,
+      "volume": 3000000,
+      "sector": "IT Services"
+    }
+  ],
+  "sector_performance": {
+    "IT Services": {
+      "avg_change_pct": 2.1,
+      "stocks_count": 1,
+      "advancing": 1,
+      "declining": 0,
+      "sentiment": "Bullish"
+    },
+    "Oil & Gas": {
+      "avg_change_pct": 1.5,
+      "stocks_count": 1,
+      "advancing": 1,
+      "declining": 0,
+      "sentiment": "Bullish"
+    }
+  },
+  "trading_summary": {
+    "total_trades": 2,
+    "winning_trades": 2,
+    "losing_trades": 0,
+    "win_rate": 100.0,
+    "total_pnl": 790,
+    "avg_profit": 395.0,
+    "avg_loss": 0,
+    "largest_win": 450,
+    "largest_loss": 340,
+    "trades_detail": [
+      {
+        "symbol": "RELIANCE",
+        "entry": 2900,
+        "exit": 2934,
+        "pnl": 340,
+        "timestamp": "2026-05-14T11:42:16.890368"
+      },
+      {
+        "symbol": "TCS",
+        "entry": 3800,
+        "exit": 3845,
+        "pnl": 450,
+        "timestamp": "2026-05-14T11:42:16.890392"
+      }
+    ]
+  },
+  "agent_performance": {},
+  "alerts": [],
+  "recommendations": [
+    "Market showing bullish momentum - Consider long positions in strong sectors",
+    "Focus on IT Services sector - showing relative strength"
+  ]
+}

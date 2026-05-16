@@ -1,0 +1,40 @@
+
+╔══════════════════════════════════════════════════════════════╗
+║           TRADING JOURNAL PERFORMANCE REPORT                 ║
+║              Last 30 Days Analysis                            ║
+╚══════════════════════════════════════════════════════════════╝
+
+📊 OVERALL STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Trades:        4
+Winning Trades:      2 ✓
+Losing Trades:       2 ✗
+Breakeven Trades:    0 ─
+Win Rate:            50.00%
+
+💰 PROFIT & LOSS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total P&L:           ₹340.00
+Total Wins:          ₹900.00
+Total Losses:        ₹-560.00
+Average Win:         ₹450.00
+Average Loss:        ₹-280.00
+Largest Win:         ₹450.00
+Largest Loss:        ₹-280.00
+
+📈 PERFORMANCE METRICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Avg P&L per Trade:   ₹85.00
+Profit Factor:       1.61
+Expectancy:          ₹85.00
+
+🏆 HIGHLIGHTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Best Day:            2026-05-14 (₹340.00)
+Worst Day:           2026-05-14 (₹340.00)
+Most Traded:         RELIANCE (2 trades)
+Best Symbol:         RELIANCE (₹900.00)
+Worst Symbol:        TCS (₹-560.00)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Generated: 2026-05-14 11:41:52
