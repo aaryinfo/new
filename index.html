@@ -2392,14 +2392,19 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFilters();
     setupSortHeaders();
     showSkeleton();
-    loadStocks();
-    loadActiveTrade();
-    loadTradingJournal();
-    loadBacktestResults();
-    loadMarketStatus();
-    loadMarqueeData();
-    loadSectorAnalysis(); 
-    startCountdown();
+    
+    // VERCEL FIX: Call quick-scan first to load real data
+    triggerQuickScan().then(() => {
+        loadStocks();
+        loadActiveTrade();
+        loadTradingJournal();
+        loadBacktestResults();
+        loadMarketStatus();
+        loadMarqueeData();
+        loadSectorAnalysis(); 
+        startCountdown();
+    });
+    
     // Refresh marquee every 60s
     setInterval(loadMarqueeData, 60000);
     
@@ -2409,6 +2414,21 @@ document.addEventListener('DOMContentLoaded', () => {
         agStart();
     }, 3000); // Wait 3 seconds for initial data to load
 });
+
+// VERCEL FIX: Trigger quick scan to load real stock data
+async function triggerQuickScan() {
+    try {
+        console.log('[VERCEL] Triggering quick scan for real data...');
+        const r = await fetch(`${API}/api/quick-scan`);
+        const j = await r.json();
+        console.log(`[VERCEL] Quick scan complete: ${j.count} stocks loaded`);
+        return j;
+    } catch (e) {
+        console.error('[VERCEL] Quick scan failed:', e);
+        // Continue anyway - will show empty data
+        return null;
+    }
+}
 
 async function loadSectorAnalysis() {
     const grid = document.getElementById('sectorGrid');
